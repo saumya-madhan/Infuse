@@ -11,8 +11,6 @@ app.set("view engine", "pug");
 app.use(express.static("public"));
 
 
-
-
 const redirect_uri = "http://localhost:3000/callback";
 const client_id = "022f1b89408c445784a6366ca1e28a16";
 const client_secret = "cf6062eddf494a1aabbc98a126491f97";
@@ -127,6 +125,8 @@ app.get("/playlist", async (req, res) => { ;
   console.log(albumId);
   res.render("playlist", {user: userInfo, album: albumId});  
  });
+
+
  app.get("/congratulations", async (req, res) => { ;
   var playlistName = req.query.name;
   var albumId = req.query.album;
@@ -142,28 +142,13 @@ app.get("/playlist", async (req, res) => { ;
         j+=1;
       }
   }
-  //console.log(track_arr);
-   const userInfo = await getData("/me");
+  const userInfo = await getData("/me");
   const data = await getDataPost(userInfo.id, playlistName);
   const addTrack = await addTracks(data.id, track_arr);
   console.log(data.href);
   res.render("congratulations", {user: userInfo, url: data.id});
  });
 
-// make another app.get
-
-app.get("/recommendations", async (req, res) => {
-  const artist_id = req.query.artist;
-  const track_id = req.query.track;
-
-  const params = new URLSearchParams({
-    seed_artist: artist_id,
-    seed_genres: "rock",
-    seed_tracks: track_id,
-  });
-  const data = await getData("/recommendations?" + params);
-  res.render("recommendation", { tracks: data.tracks });
-});
 
 let listener = app.listen(3000, function () {
   console.log(

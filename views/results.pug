@@ -5,47 +5,40 @@ block content
         meta(name='search', content=search)
     h1.results Choose Your Album
     script.
-                                
-                       var search = document.getElementsByName('search')[0].content;
-                       if (search) {
-                           const element = document.getElementById("myTable");
-                            element.remove(); 
-                        }
-                         document.getElementsByName('search')[0].content = true;
-                         var album =  document.getElementsByName('results')[0].content;
-                         album= JSON.parse(album)
-                         var table = document.createElement("table");
-                         table.setAttribute("id", "myTable");
-                        var i = 0;
-                        var j = 0;
-                        var k = 0;
-                             var row = table.insertRow(-1);
-                        for (var p = 0; p < 3; p++) { 
-                             var pic = row.insertCell(-1);
-                            const img = new Image(300, 400); // width, height
-                             img.src = album[i].images[0].url;
-                             pic.appendChild(img);
-                             var albumId = album[i].id;
-                        //-     sessionStorage.setItem("albumName", album[i].id);
-                            // img.setAttribute("onclick","location.href = '/playlist?name='+album[i].id;");
-                            img.setAttribute("onclick","location.href = '/playlist?name='+albumId;");
-                             i++;
-                        }
-                             var row2 = table.insertRow(-1);
-                             for (var p = 0; p < 3; p++) { 
-                             var title = row2.insertCell(-1);
-                             title.appendChild(document.createTextNode(album[j].name));
-                             j++;
-                         }
+        //clear results if album has been searched already
+        var search = document.getElementsByName('search')[0].content;
+        if (search) {
+            const element = document.getElementById("myTable");
+            element.remove(); 
+        }
+        document.getElementsByName('search')[0].content = true;
+        //create table
+        var album =  document.getElementsByName('results')[0].content;
+        album= JSON.parse(album)
+        var table = document.createElement("table");
+        table.setAttribute("id", "myTable");
+        //create album images
+        var row = table.insertRow(-1);
+        for (var p = 0; p < 3; p++) { 
+            var pic = row.insertCell(-1);
+            const img = new Image(300, 400); 
+            img.src = album[p].images[0].url;
+            pic.appendChild(img);
+            var albumId = album[p].id;
+            img.setAttribute("onclick","location.href = '/playlist?name='+albumId;");
+        }
+        
+        //write album name
+        var row2 = table.insertRow(-1);
+        for (var p = 0; p < 3; p++) { 
+            var title = row2.insertCell(-1);
+            title.appendChild(document.createTextNode(album[p].name));
+        }
 
-                            var row3 = table.insertRow(-1);
-                            for (var p = 0; p < 3; p++) { 
-                             var artist = row3.insertCell(-1);
-                             artist.appendChild(document.createTextNode("By "+album[k].artists[0].name));
-                             k++;
-                             }    
-                        
-                         document.body.appendChild(table);
-
-                         console.log(document.getElementsByName('results')[0].content);
-//- //- print out json
+        // write album artist
+        var row3 = table.insertRow(-1);
+        for (var p = 0; p < 3; p++) { 
+            var artist = row3.insertCell(-1);
+            artist.appendChild(document.createTextNode("By "+album[p].artists[0].name));
+        }    
+        document.body.appendChild(table);
