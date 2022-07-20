@@ -27,7 +27,7 @@ app.get("/authorize", (req, res) => {
   var auth_query_parameters = new URLSearchParams({
     response_type: "code",
     client_id: "022f1b89408c445784a6366ca1e28a16",
-    scope: ["user-library-read", "user-library-modify","playlist-modify-private","playlist-modify-public","playlist-read-private"],
+    scope: ["user-library-read", "user-library-modify","playlist-modify-private","playlist-modify-public","playlist-read-private","user-top-read"],
     redirect_uri: "http://localhost:3000/callback",
   });
 
@@ -74,18 +74,37 @@ async function getData(endpoint) {
   return data;
 }
 
-// async function getSearch(input) {
-//   const response = await fetch("https://api.spotify.com/v1/search?q=" + input + "&type=album", {
-//     method: "get",
-//     headers: {
-//       Authorization: "Bearer " + global.access_token,
-//     },
-//   });
-  
-//   const data = await response.json();
-//   return data;
-// }
- 
+async function getDataPost(endpoint, name) {
+  const response = await fetch("	https://api.spotify.com/v1/users/"+endpoint+"/playlists", {
+    method: "post",
+    headers: {
+      Authorization: "Bearer " + global.access_token,
+    },
+    body: JSON.stringify({
+      "name": name,
+      "description": "New playlist description",
+      "public": true
+    })
+  });
+
+  const data = await response.json();
+  return data;
+}
+async function addTracks(endpoint, track_uris) {
+  const response = await fetch("https://api.spotify.com/v1/playlists/"+endpoint+"/tracks?uris="+track_uris, {
+    method: "post",
+    headers: {
+      Authorization: "Bearer " + global.access_token,
+    },
+    body: JSON.stringify({
+      "uris": track_uris,
+      "position": 0,
+    })
+  });
+
+  const data = await response.json();
+  return data;
+}
 
 
 app.get("/dashboard", async (req, res) => {
@@ -97,21 +116,39 @@ app.get("/dashboard", async (req, res) => {
 app.get("/results", async (req, res) => { 
  var albumName = req.query.name;
  const searchResults = await getData("/search?q="+albumName+"&type=album&limit=3");
-//  const response = await fetch("https://api.spotify.com/v1/search?q=" + albumName + "&type=album" + "&market=US&limit=1", {
-//   method: "get",
-//   headers: {
-//     Authorization: "Bearer " + global.access_token,
-//   },
-// });
-
-// const data = await response.json();
-// albums->items->artits->name
-// var obj = JSON.parse(data);
-// console.log(JSON.parse(data)[0]);
-//res.json(data);
+ const userInfo = await getData("/me");
 res.render("results", {search: false, results: searchResults.albums.items});
   
 });
+
+app.get("/playlist", async (req, res) => { ;
+  const userInfo = await getData("/me");
+  var albumId = req.query.name;
+  console.log(albumId);
+  res.render("playlist", {user: userInfo, album: albumId});  
+ });
+ app.get("/congratulations", async (req, res) => { ;
+  var playlistName = req.query.name;
+  var albumId = req.query.album;
+  var user_tracks = await getData("/me/top/tracks?limit=10");
+  console.log(albumId);
+  var tracks = await getData("/albums/"+albumId+"/tracks?market=ES&limit=10&offset=5");
+  var track_arr = [];
+  var j = 0
+  for (var i = 0; i < tracks.items.length; i++) {
+      track_arr.push(tracks.items[i].uri);
+      if (j < user_tracks.items.length) {
+        track_arr.push(user_tracks.items[j].uri);
+        j+=1;
+      }
+  }
+  //console.log(track_arr);
+   const userInfo = await getData("/me");
+  const data = await getDataPost(userInfo.id, playlistName);
+  const addTrack = await addTracks(data.id, track_arr);
+  console.log(data.href);
+  res.render("congratulations", {user: userInfo, url: data.id});
+ });
 
 // make another app.get
 
@@ -124,7 +161,6 @@ app.get("/recommendations", async (req, res) => {
     seed_genres: "rock",
     seed_tracks: track_id,
   });
-
   const data = await getData("/recommendations?" + params);
   res.render("recommendation", { tracks: data.tracks });
 });

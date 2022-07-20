@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+    head
+        meta(name='url', content=url)
+    h1 Congratulations #{user.display_name}!!  
+    body
+    script. 
+        window.onload = function () {
+                var url = document.getElementsByName('url')[0].content;
+                window.location = "https://open.spotify.com/playlist/"+url;
+            };

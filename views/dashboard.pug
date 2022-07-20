@@ -9,54 +9,11 @@ block content
         input(id = 'sbar', type='text', placeholder='Album, Artist, Genre ')
         span
         script.
-       
-        
-
-          
             var input = document.getElementById("sbar");
             input.addEventListener("keypress", function(event) {
                 if (event.key === "Enter") {
                     event.preventDefault();
                     window.location = '/results?name=' + input.value;
-                    //- const xhr = new XMLHttpRequest()
-                    //- // open a POST request
-                    //- xhr.open("POST", "/results")
-                    //- // set content-type header to JSON
-                    //- xhr.setRequestHeader("Content-Type", "application/json");
-                    //- // send JSON data to the remote server
-                    //- //xhr.send(JSON.stringify(input.value))
-                    
-                    //- var data = JSON.stringify({"albumName":input.value});
-                    //- alert(data);
-                    //- xhr.send(data);
-
-                    //triggered when the response is completed
-                    //- xhr.onload = function() {
-                    //- if (xhr.status === 200) {
-                    //-     //parse JSON datax`x
-                    //-     data = JSON.parse(xhr.responseText)
-                    //-     console.log(data.count)
-                    //-     console.log(data.products)
-                    //- } else if (xhr.status === 404) {
-                    //-     console.log("No records found")
-                    //- }
-                    //- }
-
-                    //- //triggered when a network-level error occurs with the request
-                    //- xhr.onerror = function() {
-                    //- console.log("Network error occurred")
-                    //- }
-
-                    //- //triggered periodically as the client receives data
-                    //- //used to monitor the progress of the request
-                    //- xhr.onprogress = function(e) {
-                    //- if (e.lengthComputable) {
-                    //-     console.log(`${e.loaded} B of ${e.total} B loaded!`)
-                    //- } else {
-                    //-     console.log(`${e.loaded} B loaded!`)
-                    //- }
-                    //- }
-                    
                 }
             }); 
             var searchBox = document.querySelectorAll('.search-box input[type="text"] + span');

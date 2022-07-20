@@ -3,7 +3,7 @@ block content
     head
         meta(name='results', content=results)
         meta(name='search', content=search)
-    h1.results Top 3 Albums
+    h1.results Choose Your Album
     script.
                                 
                        var search = document.getElementsByName('search')[0].content;
@@ -25,8 +25,10 @@ block content
                             const img = new Image(300, 400); // width, height
                              img.src = album[i].images[0].url;
                              pic.appendChild(img);
+                             var albumId = album[i].id;
                         //-     sessionStorage.setItem("albumName", album[i].id);
-                        //-     img.setAttribute("onclick","location.href = '/playlist';");
+                            // img.setAttribute("onclick","location.href = '/playlist?name='+album[i].id;");
+                            img.setAttribute("onclick","location.href = '/playlist?name='+albumId;");
                              i++;
                         }
                              var row2 = table.insertRow(-1);
@@ -42,7 +44,7 @@ block content
                              artist.appendChild(document.createTextNode("By "+album[k].artists[0].name));
                              k++;
                              }    
-                        //}
+                        
                          document.body.appendChild(table);
 
                          console.log(document.getElementsByName('results')[0].content);
